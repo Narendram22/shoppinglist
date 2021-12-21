@@ -1,41 +1,50 @@
 package main
 
 import (
-    //"fmt"
+	//"fmt"
 	//"io"
+	"fmt"
 	"net/http"
-	//"os"
-    "github.com/spf13/viper"
-    "strconv"
+	"os"
+
+	"github.com/spf13/viper"
+	//"strconv"
+	"shoppinglist/config"
+
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-    zerolog.SetGlobalLevel(zerolog.Level(1))
-	// logFile, err := os.OpenFile(viper.GetString("logging.path"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
-	// if err != nil {
-	// 	log.Fatal().Msgf("Error creating or writing to the log file. %s", err.Error())
-	// }
-	// defer logFile.Close()
+	//Loading configuration
+	config.LoadConfig()
+	// Log as JSON instead of the default ASCII formatter.
+	log.SetFormatter(&log.JSONFormatter{})
 
-    router := gin.New()
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
+
+	// Only log the warning severity or above.
+	log.SetLevel(log.Level(viper.GetInt("logging.level")))
+	log.Debug("this is a test log")
+
+	router := gin.New()
 
 	// Add the logger middleware
 	router.Use(logger.SetLogger())
 
 	router.GET("/ping", func(c *gin.Context) {
-		log.Info().Msg("Received ping message")
+		log.Info("Received ping message")
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
 
 	//routes.InitRoutes(router)
-
-	log.Info().Str("Port", strconv.Itoa(viper.GetInt("webserver.port"))).Msg("Starting web server")
-	//router.Run(fmt.Sprintf(":%s", strconv.Itoa(viper.GetInt("webserver.port"))))
+	port := viper.GetInt("webserver.port")
+	log.Info("Port", port, "Starting web server")
+	router.Run(fmt.Sprintf(":%d", port))
 }
