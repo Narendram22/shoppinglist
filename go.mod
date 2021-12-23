@@ -7,5 +7,6 @@ require (
 	github.com/gin-gonic/gin v1.7.7 // indirect
 	github.com/jinzhu/gorm v1.9.16 // indirect
 	github.com/rs/zerolog v1.26.1 // indirect
+	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.10.1 // indirect
 )
