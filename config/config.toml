@@ -2,4 +2,12 @@
 port = 9595
 
 [logging]
-level = 5
+level = 5 
+
+[database]
+username = "root"
+password = "1234"
+dbname = "shoppinglist"
+ip = "localhost"
+port = 3306
+max_connection_attempt = 10
